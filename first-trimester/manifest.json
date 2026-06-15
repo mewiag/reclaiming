@@ -1,0 +1,25 @@
+{
+  "name": "First Trimester",
+  "short_name": "First Trimester",
+  "description": "A quiet first-trimester companion: gentle movement and prompts to settle the nervous system",
+  "scope": "/reclaiming/first-trimester/",
+  "start_url": "/reclaiming/first-trimester/",
+  "display": "standalone",
+  "background_color": "#F2EEE7",
+  "theme_color": "#F2EEE7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/reclaiming/first-trimester/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/reclaiming/first-trimester/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
