@@ -1,4 +1,4 @@
-const CACHE_NAME = 'first-trimester-v3';
+const CACHE_NAME = 'first-trimester-v4';
 const ASSETS = [
   '/reclaiming/first-trimester/',
   '/reclaiming/first-trimester/index.html',

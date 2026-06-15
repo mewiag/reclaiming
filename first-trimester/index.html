@@ -497,31 +497,42 @@ const PROGRAM = [
 ];
 const PROGRAM_DAYS = PROGRAM.length * 5;
 
+function isWeekend(d){ const w=d.getDay(); return w===0 || w===6; }
+function startMidnight(){ const s=new Date(PROGRAM_START_DATE); s.setHours(0,0,0,0); return s; }
+
+/* Calendar date of the k-th program weekday (k = weekIdx*5 + dayIdx), skipping weekends. */
 function slotDate(weekIdx, dayIdx){
-  const d = new Date(PROGRAM_START_DATE);
-  d.setDate(d.getDate() + weekIdx*7 + dayIdx);
+  const k = weekIdx*5 + dayIdx;
+  const d = startMidnight();
+  let added = 0;
+  while(added < k){ d.setDate(d.getDate()+1); if(!isWeekend(d)) added++; }
   return d;
 }
-function dayDiffFromStart(){
-  const now = new Date(); now.setHours(0,0,0,0);
-  const start = new Date(PROGRAM_START_DATE); start.setHours(0,0,0,0);
-  return Math.round((now - start) / 86400000);
+/* Number of weekdays from the start date to a given (weekday) date; start -> 0. */
+function weekdayIndex(date){
+  const d = new Date(date); d.setHours(0,0,0,0);
+  const cur = startMidnight();
+  let idx = 0;
+  while(cur.getTime() < d.getTime()){ cur.setDate(cur.getDate()+1); if(!isWeekend(cur)) idx++; }
+  return idx;
 }
 function todaySlot(){
-  const diff = dayDiffFromStart();
-  if(diff < 0) return { status:'before' };
-  const weekIdx = Math.floor(diff/7), dow = diff%7;
-  if(weekIdx >= PROGRAM.length) return { status:'after' };
-  if(dow > 4) return { status:'weekend', weekIdx };
-  return { status:'day', weekIdx, dayIdx:dow, n: weekIdx*5 + dow + 1 };
+  const now = new Date(); now.setHours(0,0,0,0);
+  if(now.getTime() < startMidnight().getTime()) return { status:'before' };
+  if(isWeekend(now)) return { status:'weekend' };
+  const idx = weekdayIndex(now);
+  if(idx >= PROGRAM_DAYS) return { status:'after' };
+  return { status:'day', weekIdx:Math.floor(idx/5), dayIdx:idx%5, n: idx+1 };
 }
 function nextProgramSlot(){
-  const diff = dayDiffFromStart();
-  for(let i = Math.max(diff+1, 0); i < PROGRAM.length*7; i++){
-    const w = Math.floor(i/7), dow = i%7;
-    if(dow <= 4) return { weekIdx:w, dayIdx:dow, n: w*5 + dow + 1 };
-  }
-  return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const start = startMidnight();
+  let cur;
+  if(now.getTime() < start.getTime()){ cur = start; }
+  else { cur = new Date(now); do { cur.setDate(cur.getDate()+1); } while(isWeekend(cur)); }
+  const idx = weekdayIndex(cur);
+  if(idx >= PROGRAM_DAYS) return null;
+  return { weekIdx:Math.floor(idx/5), dayIdx:idx%5, n: idx+1 };
 }
 
 /* ---------------- helpers ---------------- */
