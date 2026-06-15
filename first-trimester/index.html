@@ -120,6 +120,21 @@
   .prompt{ font-family:"Fraunces",serif; font-size:23px; line-height:1.32; font-weight:400;
     color:var(--ink); margin:6px 0 12px; }
 
+  .videolink{ display:flex; align-items:center; gap:13px; text-decoration:none; color:var(--ink);
+    background:var(--move-soft); border:1px solid #cdddcf; border-radius:14px; padding:14px 16px;
+    margin:14px 0 6px; transition:border-color .2s var(--ease), transform .12s var(--ease); }
+  .videolink:active{transform:scale(.99);}
+  .videolink:hover{border-color:var(--move);}
+  .videolink .vico{ flex:0 0 auto; width:34px; height:34px; border-radius:10px; background:var(--move);
+    display:flex; align-items:center; justify-content:center; }
+  .videolink .vico svg{width:20px; height:20px; stroke:#fff; fill:none; stroke-width:1.6; stroke-linejoin:round;}
+  .videolink .vico svg path{fill:#fff; stroke:none;}
+  .videolink .vtxt{flex:1 1 auto; min-width:0;}
+  .videolink .vlab{display:block; font-weight:600; font-size:14px; color:var(--move); line-height:1.2;}
+  .videolink .vsub{display:block; font-size:13px; color:var(--ink-soft); line-height:1.3; margin-top:2px;}
+  .videolink .varr{flex:0 0 auto; color:var(--move); font-size:16px;}
+  .vnote{margin:0 2px 4px;}
+
   .stat-row{display:flex; gap:12px; margin-bottom:14px;}
   .stat{ flex:1 1 0; min-width:0; background:var(--surface); border:1px solid var(--line);
     border-radius:14px; padding:16px 10px; text-align:center; }
@@ -303,68 +318,80 @@ const MOVES = [
       "On the inhale, let the pelvic floor gently release and open downward.",
       "On the slow exhale, feel a quiet, effortless lift and a gentle drawing-in low in the belly.",
       "A few slow rounds. The release matters as much as the lift."],
-    ease:"If you catch yourself holding your breath or gripping the belly, back off. This should feel easy." },
+    ease:"If you catch yourself holding your breath or gripping the belly, back off. This should feel easy.",
+    video:"https://www.youtube.com/watch?v=W8s6ajy7NoU", videoTitle:"Prenatal 360 Breathing & Dynamic Warm-Up (all trimesters)" },
   { id:"connection", group:"Breath & core foundations", name:"Connection breath", meta:"Breath linked to deep core",
     cues:["Build on the 360 degree breath.",
       "Inhale wide and soft. On the exhale, let a light, low engagement come through the deep belly and pelvic floor together, as if gently hugging the baby toward your spine.",
       "Let it go completely on the next inhale.",
       "Think whisper of effort, not a hard squeeze."],
-    ease:"No bearing down, no breath-holding, no doming of the belly. If you feel that, make it smaller." },
+    ease:"No bearing down, no breath-holding, no doming of the belly. If you feel that, make it smaller.",
+    video:"https://www.youtube.com/watch?v=4kvrVN6qKQ8", videoTitle:"Prenatal / Postpartum Core Connection Breath" },
   { id:"pf-lift", group:"Pelvic floor", name:"Pelvic floor lift and let-go", meta:"Lift, then fully release",
     cues:["On an exhale, gently lift the pelvic floor up and in, like softly slowing the flow of urine.",
       "Hold for a breath if comfortable, then fully let go and feel it settle back down.",
       "A few unhurried repetitions.",
       "A floor that can release is as important as one that can lift."],
-    ease:"If lifting feels like straining, or you can't sense the let-go, just practise the release on its own for now." },
+    ease:"If lifting feels like straining, or you can't sense the let-go, just practise the release on its own for now.",
+    video:"https://www.youtube.com/watch?v=APCdcePoMik", videoTitle:"Prenatal Physiotherapy: Pelvic Floor Exercises" },
   { id:"pf-release", group:"Pelvic floor", name:"Pelvic floor down-training", meta:"For a floor that holds tension",
     cues:["Comfortable position, jaw soft, shoulders down.",
       "On each slow inhale, imagine the pelvic floor opening and softening downward, letting go, not pushing.",
       "Exhale and simply rest. No active lift here.",
       "Useful on days your whole system feels braced."],
-    ease:"This is rest, not work. If you're trying hard, you're doing too much." },
+    ease:"This is rest, not work. If you're trying hard, you're doing too much.",
+    video:"https://www.youtube.com/playlist?list=PLhrUCOuqvsXKeFu2z2_YrFRQuXtc1XhUj", videoTitle:"APPEAL: Pelvic Floor Muscle Education in Pregnancy" },
   { id:"squat", group:"Gentle strength", name:"Supported squat", meta:"To comfort, with something to hold",
     cues:["Stand near a chair or counter you can lightly hold.",
       "Sit your hips back and down only as far as feels easy and stable.",
       "Breathe out as you stand; keep the breath moving the whole time.",
       "A small set, well within range. Stop while it still feels good."],
-    ease:"Avoid holding your breath or pushing to fatigue. If you feel lightheaded standing up, slow right down." },
+    ease:"Avoid holding your breath or pushing to fatigue. If you feel lightheaded standing up, slow right down.",
+    video:"https://www.youtube.com/watch?v=n9eASCpFOwk", videoTitle:"20-Minute First Trimester Prenatal Strength Workout" },
   { id:"hinge", group:"Gentle strength", name:"Hip hinge", meta:"The pattern behind picking things up",
     cues:["Feet hip-width, soft knees.",
       "Send the hips backward and let the chest tip forward, keeping a long, neutral spine.",
       "Return by squeezing through the hips, exhaling as you rise.",
       "Light and controlled. This pattern protects your back as the months go on."],
-    ease:"No rounding under load, no breath-holding. Keep the range comfortable." },
+    ease:"No rounding under load, no breath-holding. Keep the range comfortable.",
+    video:"https://www.youtube.com/watch?v=MgOkghqNFUM", videoTitle:"Hip Hinge / Romanian Deadlift — Pregnancy Strength" },
   { id:"upper", group:"Gentle strength", name:"Light upper-body work", meta:"Bands or light weights",
     cues:["Rows, gentle presses, or band pull-aparts, whatever you already know and like.",
       "Keep loads light to moderate and reps well short of failure.",
       "Exhale on the effort; never hold the breath against a load."],
-    ease:"If your usual weights feel heavier or you're more breathless than normal, drop the load. First-trimester fatigue is real." },
+    ease:"If your usual weights feel heavier or you're more breathless than normal, drop the load. First-trimester fatigue is real.",
+    video:"https://www.youtube.com/watch?v=-zkpEA0a_dE", videoTitle:"20-Minute Prenatal Upper-Body Strength (Dumbbells)" },
   { id:"catcow", group:"Mobility & posture", name:"Spinal waves", meta:"Cat-cow, slow and curious",
     cues:["On hands and knees, or seated if that's easier.",
       "Let the spine ripple, arching gently then rounding gently, moving with the breath.",
       "Explore where it wants to go, Feldenkrais-style. No fixed shape.",
       "A handful of slow waves."],
-    ease:"Stay in the painless, easy middle of your range. Nothing forced." },
+    ease:"Stay in the painless, easy middle of your range. Nothing forced.",
+    video:"https://www.youtube.com/watch?v=4q1mbbOytuQ", videoTitle:"Cat-Cow for the Back — Prenatal Yoga" },
   { id:"hips", group:"Mobility & posture", name:"Gentle hip openers", meta:"Ease through the hips",
     cues:["Seated figure-four, a supported low lunge, or easy hip circles.",
       "Move slowly and breathe into anything tight.",
       "Back off the moment it stops feeling like a pleasant stretch."],
-    ease:"Ligaments get more lax in pregnancy, so don't chase a deeper stretch than usual. Easy is the target." },
+    ease:"Ligaments get more lax in pregnancy, so don't chase a deeper stretch than usual. Easy is the target.",
+    video:"https://www.youtube.com/watch?v=y_LXIbuAcVM", videoTitle:"Prenatal Hip Openers (all trimesters)" },
   { id:"posture", group:"Mobility & posture", name:"Posture reset", meta:"Ribs stacked over the pelvis",
     cues:["Stand tall. Let the ribs settle down and back over the pelvis rather than flaring forward.",
       "Crown of the head floating up, shoulders soft.",
       "A few slow breaths here. A good one to return to through the day."],
-    ease:"No military stiffness. You're finding ease and length, not bracing." },
+    ease:"No military stiffness. You're finding ease and length, not bracing.",
+    video:"https://www.youtube.com/watch?v=y2vf_WJiCn4", videoTitle:"Prenatal Posture Workout (1st, 2nd & 3rd trimester)" },
   { id:"walk", group:"Aerobic", name:"Walking", meta:"The quiet workhorse",
     cues:["A conversational pace, where you could still talk, just.",
       "Most days, some walking is plenty.",
       "Outside if you can; it doubles as nervous-system regulation."],
-    ease:"Slow down if you can't speak in sentences, feel dizzy, or get a stitch. Hydrate and don't overheat." },
+    ease:"Slow down if you can't speak in sentences, feel dizzy, or get a stitch. Hydrate and don't overheat.",
+    video:"https://www.youtube.com/watch?v=Qd4QBIoKrJM", videoTitle:"Pregnancy Walking Workout — no squats, no lunges (20 min)" },
   { id:"cardio", group:"Aerobic", name:"Easy cardio", meta:"Cycling, swimming, low-impact",
     cues:["Stationary cycling or swimming are kind to the joints and let you control intensity.",
       "Keep it moderate, working but not gasping.",
       "General guidance (e.g. ACOG) points to roughly 150 minutes a week of moderate activity for uncomplicated pregnancies. Treat that as an approximate guideline, not a target, and one that depends on your clearance."],
-    ease:"Avoid overheating (go easy on hot rooms and hot water), stay well hydrated, and stop if you feel faint or unusually breathless." }
+    ease:"Avoid overheating (go easy on hot rooms and hot water), stay well hydrated, and stop if you feel faint or unusually breathless.",
+    video:"https://www.youtube.com/watch?v=x9DcwE63eLA", videoTitle:"Low-Impact HIIT — First & Second Trimester Prenatal Cardio" }
 ];
 
 const MINDS = [
@@ -447,6 +474,13 @@ function openDetail(type,id){
     html+='<h1>'+esc(data.name)+'</h1>';
     html+='<ul class="cues">'+data.cues.map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul>';
     html+='<div class="easeoff"><p class="eyebrow">Ease off if</p>'+esc(data.ease)+'</div>';
+    if(data.video){
+      html+='<a class="videolink" href="'+data.video+'" target="_blank" rel="noopener noreferrer">'
+        +'<span class="vico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg></span>'
+        +'<span class="vtxt"><span class="vlab">Watch a guided video</span><span class="vsub">'+esc(data.videoTitle)+'</span></span>'
+        +'<span class="varr">↗</span></a>';
+      html+='<p class="vnote small soft">Opens YouTube in a new tab. A guide, not a prescription &mdash; clear movement with your care team first.</p>';
+    }
     html+='<button class="donebtn '+(done?'on':'')+'" id="detailDone">'+(done?'✓ Done today':'Mark done today')+'</button>';
   }else{
     html+='<span class="pill mind">'+esc(data.group)+'</span>';
