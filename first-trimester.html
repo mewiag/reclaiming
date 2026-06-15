@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#F2EEE7" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="First Trimester" />
+<title>First Trimester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    --paper:#F2EEE7; --surface:#FBF9F5; --surface-2:#EFEAE1;
+    --ink:#2B2724; --ink-soft:#6E665E; --line:#E2DBD0;
+    --move:#54705B; --move-soft:#E6EDE6;
+    --mind:#5B6B82; --mind-soft:#E6EAF0;
+    --gold:#C0974A; --radius:18px;
+    --shadow:0 1px 2px rgba(43,39,36,.04), 0 8px 24px rgba(43,39,36,.05);
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Figtree",system-ui,-apple-system,sans-serif;
+    font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden; min-height:100dvh;
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important;} }
+
+  .app{ max-width:480px; width:100%; margin:0 auto; min-height:100dvh;
+    display:flex; flex-direction:column; background:var(--paper); position:relative; }
+  .scroll{ flex:1 1 auto; overflow-y:auto; overflow-x:hidden;
+    padding:calc(env(safe-area-inset-top) + 8px) 20px 110px; -webkit-overflow-scrolling:touch; }
+  .screen{display:none; animation:rise .4s var(--ease) both;}
+  .screen.active{display:block;}
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .eyebrow{ font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:600; margin:0 0 6px; }
+  h1{font-family:"Fraunces",serif; font-weight:500; font-size:30px; line-height:1.1; margin:0 0 4px; letter-spacing:-.01em;}
+  h2{font-family:"Fraunces",serif; font-weight:500; font-size:21px; line-height:1.15; margin:0 0 10px; letter-spacing:-.01em;}
+  h3{font-family:"Fraunces",serif; font-weight:500; font-size:18px; margin:0 0 6px;}
+  p{margin:0 0 12px;}
+  .soft{color:var(--ink-soft);} .small{font-size:14px;} .ll{max-width:60ch;}
+
+  .top{padding:14px 0 18px;}
+  .datestr{font-size:13px; color:var(--ink-soft); margin:0 0 10px; letter-spacing:.02em;}
+
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); margin-bottom:14px; }
+  .card h2,.card h3{margin-top:0;}
+
+  .arrive{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
+  .arrive-row{display:flex; gap:10px;}
+  .chip{ flex:1 1 0; min-width:0; border:1px solid var(--line); background:var(--surface);
+    border-radius:14px; padding:14px 8px; min-height:64px; font-family:inherit; font-size:14px;
+    color:var(--ink); cursor:pointer; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:3px; text-align:center;
+    transition:border-color .2s var(--ease), background .2s var(--ease), transform .12s var(--ease); }
+  .chip:active{transform:scale(.97);}
+  .chip .dot{width:9px;height:9px;border-radius:50%;}
+  .chip.sel{border-color:var(--ink); background:var(--surface-2);}
+  .chip .lab{font-weight:600;}
+  .chip .sub{font-size:11px; color:var(--ink-soft); line-height:1.2;}
+
+  .suggest{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px;
+    padding:16px; margin-top:12px; }
+  .suggest .eyebrow{margin-bottom:8px;}
+
+  .item{ width:100%; text-align:left; background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; padding:14px 16px; margin-bottom:10px; cursor:pointer; display:flex;
+    align-items:center; gap:14px; min-height:56px; font-family:inherit; color:var(--ink);
+    transition:border-color .2s var(--ease), transform .12s var(--ease); }
+  .item:active{transform:scale(.99);}
+  .item:hover{border-color:#cfc6b8;}
+  .item .txt{flex:1 1 auto; min-width:0;}
+  .item .name{font-weight:600; font-size:15px; line-height:1.25; display:block;}
+  .item .meta{font-size:13px; color:var(--ink-soft); line-height:1.3; display:block;}
+  .tag{ flex:0 0 auto; width:6px; align-self:stretch; border-radius:6px; min-height:34px; }
+  .tag.move{background:var(--move);} .tag.mind{background:var(--mind);}
+  .check{ flex:0 0 auto; width:24px; height:24px; border-radius:50%; border:2px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff; }
+  .check.on{background:var(--gold); border-color:var(--gold);}
+
+  .seclab{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft);
+    font-weight:600; margin:22px 2px 10px; }
+  .seclab:first-of-type{margin-top:6px;}
+
+  .back{ background:none; border:none; font-family:inherit; color:var(--ink-soft); font-size:15px;
+    cursor:pointer; padding:8px 4px 12px 0; display:inline-flex; align-items:center; gap:6px; min-height:44px; }
+  .pill{ display:inline-block; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    padding:4px 10px; border-radius:999px; margin-bottom:10px; }
+  .pill.move{background:var(--move-soft); color:var(--move);}
+  .pill.mind{background:var(--mind-soft); color:var(--mind);}
+  .cues{list-style:none; padding:0; margin:14px 0;}
+  .cues li{ position:relative; padding:0 0 0 22px; margin-bottom:10px; line-height:1.45; }
+  .cues li::before{ content:""; position:absolute; left:2px; top:9px; width:7px; height:7px;
+    border-radius:50%; background:var(--move); }
+  .cues.mindcue li::before{background:var(--mind);}
+  .easeoff{ background:#FBF3E9; border:1px solid #EAD9C0; border-radius:14px; padding:14px 16px;
+    margin:14px 0; font-size:14px; line-height:1.45; }
+  .easeoff .eyebrow{color:#9A6B2E; margin-bottom:6px;}
+  .donebtn{ width:100%; min-height:52px; border-radius:14px; border:1px solid var(--move);
+    background:var(--move-soft); color:var(--move); font-family:inherit; font-weight:600; font-size:15px;
+    cursor:pointer; margin-top:8px; transition:transform .12s var(--ease); }
+  .donebtn.mind{border-color:var(--mind); background:var(--mind-soft); color:var(--mind);}
+  .donebtn:active{transform:scale(.99);}
+  .donebtn.on{background:var(--gold); border-color:var(--gold); color:#fff;}
+  .prompt{ font-family:"Fraunces",serif; font-size:23px; line-height:1.32; font-weight:400;
+    color:var(--ink); margin:6px 0 12px; }
+
+  .stat-row{display:flex; gap:12px; margin-bottom:14px;}
+  .stat{ flex:1 1 0; min-width:0; background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; padding:16px 10px; text-align:center; }
+  .stat .num{font-family:"Fraunces",serif; font-size:28px; font-weight:500; line-height:1;}
+  .stat .lab{font-size:12px; color:var(--ink-soft); margin-top:6px; line-height:1.25;}
+  textarea{ width:100%; min-height:90px; resize:vertical; border:1px solid var(--line); border-radius:14px;
+    padding:14px; font-family:inherit; font-size:15px; color:var(--ink); background:var(--surface); line-height:1.5; }
+  textarea:focus{outline:2px solid var(--mind); outline-offset:1px;}
+  .ghostbtn{ background:none; border:1px solid var(--line); border-radius:12px; padding:10px 16px;
+    font-family:inherit; font-size:14px; color:var(--ink-soft); cursor:pointer; min-height:44px; }
+  .note-disclaimer{ background:var(--mind-soft); border:1px solid #cdd6e3; border-radius:14px;
+    padding:16px; font-size:14px; line-height:1.5; color:#3f4a5c; }
+
+  nav{ position:sticky; bottom:0; z-index:30; background:rgba(251,249,245,.92);
+    backdrop-filter:saturate(1.4) blur(10px); border-top:1px solid var(--line);
+    padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); display:flex; gap:2px;
+    max-width:480px; width:100%; margin:0 auto; }
+  .navbtn{ flex:1 1 0; min-width:0; background:none; border:none; cursor:pointer; font-family:inherit;
+    color:var(--ink-soft); padding:8px 4px 6px; display:flex; flex-direction:column; align-items:center;
+    gap:3px; min-height:52px; border-radius:12px; transition:color .2s var(--ease); }
+  .navbtn .ico{width:24px; height:24px; display:block;}
+  .navbtn .nlab{font-size:11px; font-weight:500;}
+  .navbtn.active{color:var(--ink);}
+  .navbtn svg{stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;}
+
+  .overlay{ position:fixed; inset:0; z-index:50; background:rgba(43,39,36,.45);
+    display:none; align-items:flex-end; justify-content:center; }
+  .overlay.show{display:flex;}
+  .sheet{ background:var(--surface); width:100%; max-width:480px; border-radius:22px 22px 0 0;
+    padding:24px 22px calc(env(safe-area-inset-bottom) + 24px); animation:slideup .35s var(--ease) both; }
+  @keyframes slideup{from{transform:translateY(100%);}to{transform:none;}}
+  .sheet h2{margin-top:0;}
+  .primarybtn{ width:100%; min-height:52px; border-radius:14px; border:none; background:var(--ink);
+    color:#fff; font-family:inherit; font-weight:600; font-size:15px; cursor:pointer; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="scroll" id="scroll">
+
+    <!-- TODAY -->
+    <section class="screen active" id="screen-today">
+      <div class="top">
+        <div class="datestr" id="datestr"></div>
+        <h1>Good to have you here.</h1>
+        <p class="soft" style="margin-bottom:0;">One small thing today is enough.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">How are you arriving?</p>
+        <div class="arrive">
+          <div class="arrive-row">
+            <button class="chip" data-energy="depleted"><span class="dot" style="background:#9A6B5E;"></span><span class="lab">Depleted</span><span class="sub">Wiped, queasy, low</span></button>
+            <button class="chip" data-energy="steady"><span class="dot" style="background:var(--move);"></span><span class="lab">Steady</span><span class="sub">Okay, in the body</span></button>
+            <button class="chip" data-energy="spacious"><span class="dot" style="background:var(--gold);"></span><span class="lab">Spacious</span><span class="sub">Some room today</span></button>
+          </div>
+        </div>
+        <div class="suggest" id="suggestBox" style="display:none;">
+          <p class="eyebrow">For today</p>
+          <p id="suggestText" style="margin:0;"></p>
+        </div>
+      </div>
+      <p class="seclab">Today's movement</p>
+      <div id="todayMove"></div>
+      <p class="seclab">Today's mind</p>
+      <div id="todayMind"></div>
+    </section>
+
+    <!-- MOVE -->
+    <section class="screen" id="screen-move">
+      <div class="top">
+        <p class="eyebrow">Move</p>
+        <h1>Gentle by design.</h1>
+        <p class="soft ll" style="margin-bottom:0;">First-trimester movement, scaled to how you feel. Cues, not rep counts. Tap any to open.</p>
+      </div>
+      <div id="moveList"></div>
+    </section>
+
+    <!-- MIND -->
+    <section class="screen" id="screen-mind">
+      <div class="top">
+        <p class="eyebrow">Mind</p>
+        <h1>A place to settle.</h1>
+        <p class="soft ll" style="margin-bottom:0;">Short prompts for the nervous system — orienting, checking in, resting. No fixing required.</p>
+      </div>
+      <div id="mindList"></div>
+    </section>
+
+    <!-- YOU -->
+    <section class="screen" id="screen-you">
+      <div class="top">
+        <p class="eyebrow">You</p>
+        <h1>Showing up.</h1>
+        <p class="soft" style="margin-bottom:0;">Not a streak to protect — just a record of the days you turned toward yourself.</p>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="num" id="statDays">0</div><div class="lab">days shown up</div></div>
+        <div class="stat"><div class="num" id="statMoves">0</div><div class="lab">moves done</div></div>
+        <div class="stat"><div class="num" id="statMinds">0</div><div class="lab">mind moments</div></div>
+      </div>
+      <div class="card">
+        <h3>Today's note</h3>
+        <p class="small soft" style="margin-top:0;">How was the body, the mood, the day. For you only.</p>
+        <textarea id="noteBox" placeholder="A line or two..."></textarea>
+        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+          <button class="ghostbtn" id="saveNote">Save note</button>
+          <span class="small soft" id="noteSaved"></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Before you move</h3>
+        <div class="note-disclaimer">
+          Your pregnancy has a medical layer to it &mdash; the anticoagulation, the autoimmune protocol, the team around you. Treat everything here as general first-trimester movement, and let your OB-GYN or a pelvic-health physio confirm what's right for <em>your</em> body. If anything ever feels wrong &mdash; bleeding, cramping, real dizziness, breathlessness &mdash; stop and call your team, not this app.
+        </div>
+      </div>
+      <div class="card">
+        <h3>Data &amp; reset</h3>
+        <p class="small soft" style="margin-top:0;">Everything stays on this device. Nothing is sent anywhere.</p>
+        <button class="ghostbtn" id="resetBtn">Clear all my data</button>
+      </div>
+      <p class="small soft" style="text-align:center; margin-top:18px;">v1 &mdash; built to be reshaped. Tell me what to change.</p>
+    </section>
+
+    <!-- DETAIL -->
+    <section class="screen" id="screen-detail">
+      <button class="back" id="backBtn">&larr; Back</button>
+      <div id="detailBody"></div>
+    </section>
+
+  </div>
+
+  <nav>
+    <button class="navbtn active" data-go="today" aria-label="Today"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></span><span class="nlab">Today</span></button>
+    <button class="navbtn" data-go="move" aria-label="Move"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.2"/><path d="M5 21l3-6 4 2 3-3M8 15l-1-4 5-1 3 3 3 1"/></svg></span><span class="nlab">Move</span></button>
+    <button class="navbtn" data-go="mind" aria-label="Mind"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span><span class="nlab">Mind</span></button>
+    <button class="navbtn" data-go="you" aria-label="You"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></span><span class="nlab">You</span></button>
+  </nav>
+</div>
+
+<div class="overlay" id="welcome">
+  <div class="sheet">
+    <h2>Before we begin</h2>
+    <p class="ll">This is a quiet companion for the first trimester &mdash; some gentle movement, some prompts to settle the nervous system. It pairs the body and the mind, roughly evenly.</p>
+    <p class="ll">It isn't medical advice, and it doesn't know your protocol. Because your pregnancy carries extra medical complexity, please let your OB-GYN or pelvic-health physio confirm what movement is right for you. If anything feels off, your care team comes first.</p>
+    <p class="small soft">Everything you do here stays on your device.</p>
+    <button class="primarybtn" id="welcomeOk">I understand</button>
+  </div>
+</div>
+
+<script>
+/* ---------------- storage (safe; memory fallback if blocked) ---------------- */
+const Store = (() => {
+  const KEY = "ft_companion_v1";
+  let mem = null;
+  function fresh(){ return { seenWelcome:false, days:{}, lastEnergy:null }; }
+  function read(){
+    if(mem) return mem;
+    try{ const raw = localStorage.getItem(KEY); mem = raw ? JSON.parse(raw) : fresh(); }
+    catch(e){ mem = mem || fresh(); }
+    return mem;
+  }
+  function write(s){ mem = s; try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+  function reset(){ mem = fresh(); try{ localStorage.removeItem(KEY); }catch(e){} }
+  return { read, write, reset };
+})();
+
+const todayKey = () => {
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+};
+function dayRecord(){
+  const s = Store.read();
+  if(!s.days[todayKey()]) s.days[todayKey()] = { moves:[], minds:[], note:"" };
+  return s.days[todayKey()];
+}
+
+/* ---------------- content ---------------- */
+const MOVES = [
+  { id:"breath-360", group:"Breath & core foundations", name:"360 degree breath", meta:"The base everything sits on",
+    cues:["Sit or lie comfortably. Hands on your lower ribs.",
+      "Breathe in and let the ribs widen in all directions, and the belly soften out.",
+      "On the inhale, let the pelvic floor gently release and open downward.",
+      "On the slow exhale, feel a quiet, effortless lift and a gentle drawing-in low in the belly.",
+      "A few slow rounds. The release matters as much as the lift."],
+    ease:"If you catch yourself holding your breath or gripping the belly, back off. This should feel easy." },
+  { id:"connection", group:"Breath & core foundations", name:"Connection breath", meta:"Breath linked to deep core",
+    cues:["Build on the 360 degree breath.",
+      "Inhale wide and soft. On the exhale, let a light, low engagement come through the deep belly and pelvic floor together, as if gently hugging the baby toward your spine.",
+      "Let it go completely on the next inhale.",
+      "Think whisper of effort, not a hard squeeze."],
+    ease:"No bearing down, no breath-holding, no doming of the belly. If you feel that, make it smaller." },
+  { id:"pf-lift", group:"Pelvic floor", name:"Pelvic floor lift and let-go", meta:"Lift, then fully release",
+    cues:["On an exhale, gently lift the pelvic floor up and in, like softly slowing the flow of urine.",
+      "Hold for a breath if comfortable, then fully let go and feel it settle back down.",
+      "A few unhurried repetitions.",
+      "A floor that can release is as important as one that can lift."],
+    ease:"If lifting feels like straining, or you can't sense the let-go, just practise the release on its own for now." },
+  { id:"pf-release", group:"Pelvic floor", name:"Pelvic floor down-training", meta:"For a floor that holds tension",
+    cues:["Comfortable position, jaw soft, shoulders down.",
+      "On each slow inhale, imagine the pelvic floor opening and softening downward, letting go, not pushing.",
+      "Exhale and simply rest. No active lift here.",
+      "Useful on days your whole system feels braced."],
+    ease:"This is rest, not work. If you're trying hard, you're doing too much." },
+  { id:"squat", group:"Gentle strength", name:"Supported squat", meta:"To comfort, with something to hold",
+    cues:["Stand near a chair or counter you can lightly hold.",
+      "Sit your hips back and down only as far as feels easy and stable.",
+      "Breathe out as you stand; keep the breath moving the whole time.",
+      "A small set, well within range. Stop while it still feels good."],
+    ease:"Avoid holding your breath or pushing to fatigue. If you feel lightheaded standing up, slow right down." },
+  { id:"hinge", group:"Gentle strength", name:"Hip hinge", meta:"The pattern behind picking things up",
+    cues:["Feet hip-width, soft knees.",
+      "Send the hips backward and let the chest tip forward, keeping a long, neutral spine.",
+      "Return by squeezing through the hips, exhaling as you rise.",
+      "Light and controlled. This pattern protects your back as the months go on."],
+    ease:"No rounding under load, no breath-holding. Keep the range comfortable." },
+  { id:"upper", group:"Gentle strength", name:"Light upper-body work", meta:"Bands or light weights",
+    cues:["Rows, gentle presses, or band pull-aparts, whatever you already know and like.",
+      "Keep loads light to moderate and reps well short of failure.",
+      "Exhale on the effort; never hold the breath against a load."],
+    ease:"If your usual weights feel heavier or you're more breathless than normal, drop the load. First-trimester fatigue is real." },
+  { id:"catcow", group:"Mobility & posture", name:"Spinal waves", meta:"Cat-cow, slow and curious",
+    cues:["On hands and knees, or seated if that's easier.",
+      "Let the spine ripple, arching gently then rounding gently, moving with the breath.",
+      "Explore where it wants to go, Feldenkrais-style. No fixed shape.",
+      "A handful of slow waves."],
+    ease:"Stay in the painless, easy middle of your range. Nothing forced." },
+  { id:"hips", group:"Mobility & posture", name:"Gentle hip openers", meta:"Ease through the hips",
+    cues:["Seated figure-four, a supported low lunge, or easy hip circles.",
+      "Move slowly and breathe into anything tight.",
+      "Back off the moment it stops feeling like a pleasant stretch."],
+    ease:"Ligaments get more lax in pregnancy, so don't chase a deeper stretch than usual. Easy is the target." },
+  { id:"posture", group:"Mobility & posture", name:"Posture reset", meta:"Ribs stacked over the pelvis",
+    cues:["Stand tall. Let the ribs settle down and back over the pelvis rather than flaring forward.",
+      "Crown of the head floating up, shoulders soft.",
+      "A few slow breaths here. A good one to return to through the day."],
+    ease:"No military stiffness. You're finding ease and length, not bracing." },
+  { id:"walk", group:"Aerobic", name:"Walking", meta:"The quiet workhorse",
+    cues:["A conversational pace, where you could still talk, just.",
+      "Most days, some walking is plenty.",
+      "Outside if you can; it doubles as nervous-system regulation."],
+    ease:"Slow down if you can't speak in sentences, feel dizzy, or get a stitch. Hydrate and don't overheat." },
+  { id:"cardio", group:"Aerobic", name:"Easy cardio", meta:"Cycling, swimming, low-impact",
+    cues:["Stationary cycling or swimming are kind to the joints and let you control intensity.",
+      "Keep it moderate, working but not gasping.",
+      "General guidance (e.g. ACOG) points to roughly 150 minutes a week of moderate activity for uncomplicated pregnancies. Treat that as an approximate guideline, not a target, and one that depends on your clearance."],
+    ease:"Avoid overheating (go easy on hot rooms and hot water), stay well hydrated, and stop if you feel faint or unusually breathless." }
+];
+
+const MINDS = [
+  { id:"orient", group:"Grounding", name:"Orienting", meta:"Let your eyes lead",
+    prompt:"Slowly look around the room. Let your eyes land wherever they want, no agenda. Name three things you can see, in no hurry.",
+    body:"This tells the system, gently, that you're here and it's now. Nothing to solve, just landing back in the room." },
+  { id:"contact", group:"Grounding", name:"Points of contact", meta:"Find the ground",
+    prompt:"Feel where your body meets the chair, the bed, the floor. Let your weight be held there. Let a little of it go.",
+    body:"You don't have to hold yourself up alone right now. The surface underneath you is already doing it." },
+  { id:"exhale", group:"Grounding", name:"The long exhale", meta:"Lengthen the out-breath",
+    prompt:"Breathe in for a comfortable count. Then make the exhale a little longer than the inhale. Five or six of those, slow.",
+    body:"A longer exhale leans on the parasympathetic side, your system's own brake. You already know this one in your body." },
+  { id:"part", group:"Checking in", name:"Who's here?", meta:"Turn toward a part",
+    prompt:"Notice what part of you is most present right now. Tired? Anxious? Hopeful? Can you turn toward it with a little curiosity, the way you would for someone you love?",
+    body:"You don't have to change it. Being seen is often enough, for the part and for you." },
+  { id:"worried", group:"Checking in", name:"The worried part", meta:"It doesn't need fixing",
+    prompt:"If there's a part of you that's scared about the pregnancy, let it know you noticed. You're not arguing with it. You're letting it know it isn't alone in there.",
+    body:"Worry usually softens when it stops having to shout to be heard." },
+  { id:"both", group:"Reframing", name:"Both can sit here", meta:"Hope and fear together",
+    prompt:"You're allowed to feel the hope and the fear at the same time. They can share the seat. You don't have to pick one.",
+    body:"Holding both isn't being unsure. It's being honest about something genuinely uncertain." },
+  { id:"next", group:"Reframing", name:"Just the next thing", meta:"Shrink the horizon",
+    prompt:"Your job today isn't the whole pregnancy. It's the next small thing. A glass of water. One slow breath. Then the one after that.",
+    body:"The mind wants to manage the entire arc at once. It can't. The next thing is enough." },
+  { id:"tired", group:"Rest", name:"Tired is information", meta:"Permission to do less",
+    prompt:"Tired isn't a failure of willpower. It's data, your body building something enormous. What would five percent more rest look like in the next hour?",
+    body:"First-trimester fatigue is the body doing real work behind the scenes. You can let it." },
+  { id:"nadir", group:"Rest", name:"The small-hours wake", meta:"For the nights you stir",
+    prompt:"If you wake in the small hours, see if you can meet it without alarm. Soften your jaw. Let the system know it's safe to settle.",
+    body:"Waking at the deepest dip isn't a malfunction. It can be a sensitive, attentive nervous system doing a quiet check. It doesn't need you to fight it." }
+];
+
+/* ---------------- helpers ---------------- */
+function groupBy(arr){ const m={}; arr.forEach(x=>{(m[x.group]=m[x.group]||[]).push(x);}); return m; }
+function isDone(type,id){ return dayRecord()[type].includes(id); }
+function toggleDone(type,id){
+  const s=Store.read(); const rec=s.days[todayKey()];
+  const i=rec[type].indexOf(id); if(i===-1) rec[type].push(id); else rec[type].splice(i,1);
+  Store.write(s);
+}
+function esc(str){ return String(str).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+/* ---------------- item + list rendering ---------------- */
+function itemHTML(type,x,storeKey){
+  const done=isDone(storeKey,x.id);
+  return '<button class="item" data-type="'+type+'" data-id="'+x.id+'">'
+    +'<span class="tag '+type+'"></span>'
+    +'<span class="txt"><span class="name">'+esc(x.name)+'</span><span class="meta">'+esc(x.meta)+'</span></span>'
+    +'<span class="check '+(done?'on':'')+'">'+(done?'✓':'')+'</span></button>';
+}
+function bindItems(container){
+  container.querySelectorAll('.item').forEach(btn=>{
+    btn.addEventListener('click',()=> openDetail(btn.dataset.type, btn.dataset.id));
+  });
+}
+
+function renderMove(){
+  const groups=groupBy(MOVES); let html='';
+  Object.keys(groups).forEach(g=>{ html+='<p class="seclab">'+g+'</p>'; groups[g].forEach(m=> html+=itemHTML('move',m,'moves')); });
+  const el=document.getElementById('moveList'); el.innerHTML=html; bindItems(el);
+}
+function renderMind(){
+  const groups=groupBy(MINDS); let html='';
+  Object.keys(groups).forEach(g=>{ html+='<p class="seclab">'+g+'</p>'; groups[g].forEach(m=> html+=itemHTML('mind',m,'minds')); });
+  const el=document.getElementById('mindList'); el.innerHTML=html; bindItems(el);
+}
+
+/* ---------------- detail view ---------------- */
+let returnTab='move';
+function openDetail(type,id){
+  const isMove = type==='move';
+  const data = (isMove?MOVES:MINDS).find(x=>x.id===id);
+  if(!data) return;
+  const storeKey = isMove?'moves':'minds';
+  const done = isDone(storeKey,id);
+  let html='';
+
+  if(isMove){
+    html+='<span class="pill move">'+esc(data.group)+'</span>';
+    html+='<h1>'+esc(data.name)+'</h1>';
+    html+='<ul class="cues">'+data.cues.map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul>';
+    html+='<div class="easeoff"><p class="eyebrow">Ease off if</p>'+esc(data.ease)+'</div>';
+    html+='<button class="donebtn '+(done?'on':'')+'" id="detailDone">'+(done?'✓ Done today':'Mark done today')+'</button>';
+  }else{
+    html+='<span class="pill mind">'+esc(data.group)+'</span>';
+    html+='<h1>'+esc(data.name)+'</h1>';
+    html+='<p class="prompt">'+esc(data.prompt)+'</p>';
+    html+='<p class="soft ll">'+esc(data.body)+'</p>';
+    html+='<button class="donebtn mind '+(done?'on':'')+'" id="detailDone">'+(done?'✓ Sat with this':'I sat with this')+'</button>';
+  }
+  document.getElementById('detailBody').innerHTML=html;
+
+  document.getElementById('detailDone').addEventListener('click',function(){
+    toggleDone(storeKey,id);
+    const nowDone=isDone(storeKey,id);
+    this.classList.toggle('on',nowDone);
+    if(isMove) this.textContent = nowDone?'✓ Done today':'Mark done today';
+    else this.textContent = nowDone?'✓ Sat with this':'I sat with this';
+  });
+
+  showScreen('detail',false);
+  document.getElementById('scroll').scrollTop=0;
+}
+
+/* ---------------- today ---------------- */
+function renderToday(){
+  const d=new Date();
+  document.getElementById('datestr').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const energy=Store.read().lastEnergy;
+  document.querySelectorAll('.chip').forEach(c=> c.classList.toggle('sel', c.dataset.energy===energy));
+  if(energy) showSuggestion(energy);
+
+  const seed=parseInt(todayKey().replace(/-/g,''),10);
+  const move=MOVES[seed%MOVES.length];
+  const mind=MINDS[seed%MINDS.length];
+  const tm=document.getElementById('todayMove'); tm.innerHTML=itemHTML('move',move,'moves'); bindItems(tm);
+  const tn=document.getElementById('todayMind'); tn.innerHTML=itemHTML('mind',mind,'minds'); bindItems(tn);
+}
+function showSuggestion(energy){
+  const map={
+    depleted:"A depleted day still counts. Try the long exhale or points of contact under Mind, and if anything in the body, just the 360 degree breath. That's a full day of showing up.",
+    steady:"Pick one thing from Move (a short walk or pelvic-floor work is plenty) and one prompt from Mind. You don't need the whole list.",
+    spacious:"There's room today. You could string together breath, a little gentle strength or mobility, and a mind prompt to close. Still, stop while it feels good."
+  };
+  document.getElementById('suggestText').textContent=map[energy];
+  document.getElementById('suggestBox').style.display='block';
+}
+
+/* ---------------- you / stats / notes ---------------- */
+function renderYou(){
+  const s=Store.read();
+  let days=0, moves=0, minds=0;
+  Object.values(s.days).forEach(r=>{
+    if((r.moves&&r.moves.length)||(r.minds&&r.minds.length)) days++;
+    moves+=(r.moves?r.moves.length:0); minds+=(r.minds?r.minds.length:0);
+  });
+  document.getElementById('statDays').textContent=days;
+  document.getElementById('statMoves').textContent=moves;
+  document.getElementById('statMinds').textContent=minds;
+  document.getElementById('noteBox').value=dayRecord().note||'';
+  document.getElementById('noteSaved').textContent='';
+}
+
+/* ---------------- nav ---------------- */
+function showScreen(name, updateNav){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(updateNav!==false){
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.go===name));
+  }
+  document.getElementById('scroll').scrollTop=0;
+  if(name==='today') renderToday();
+  if(name==='move') renderMove();
+  if(name==='mind') renderMind();
+  if(name==='you') renderYou();
+}
+
+/* ---------------- wiring ---------------- */
+document.querySelectorAll('.navbtn').forEach(b=>{
+  b.addEventListener('click',()=>{ returnTab=b.dataset.go; showScreen(b.dataset.go); });
+});
+document.getElementById('backBtn').addEventListener('click',()=>{
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active', x.dataset.go===returnTab));
+  showScreen(returnTab);
+});
+document.querySelectorAll('.chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const s=Store.read(); s.lastEnergy=c.dataset.energy; Store.write(s);
+    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('sel',x===c));
+    showSuggestion(c.dataset.energy);
+  });
+});
+document.getElementById('saveNote').addEventListener('click',()=>{
+  const s=Store.read(); s.days[todayKey()].note=document.getElementById('noteBox').value; Store.write(s);
+  document.getElementById('noteSaved').textContent='Saved.';
+  setTimeout(()=>{document.getElementById('noteSaved').textContent='';},1800);
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm('Clear everything stored on this device? This cannot be undone.')){
+    Store.reset(); renderYou(); renderToday();
+    alert('Cleared.');
+  }
+});
+document.getElementById('welcomeOk').addEventListener('click',()=>{
+  const s=Store.read(); s.seenWelcome=true; Store.write(s);
+  document.getElementById('welcome').classList.remove('show');
+});
+
+/* ---------------- init ---------------- */
+(function init(){
+  renderToday();
+  if(!Store.read().seenWelcome){ document.getElementById('welcome').classList.add('show'); }
+})();
+</script>
+</body>
+</html>
